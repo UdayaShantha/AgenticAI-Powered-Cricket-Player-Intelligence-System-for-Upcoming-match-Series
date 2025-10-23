@@ -1,4 +1,4 @@
-🏏 AI-Powered Cricket Player Intelligence System<br><br>
+🏏 AgenticAI-Powered Cricket Player Intelligence System<br><br>
 An intelligent n8n workflow that analyzes cricket players using multi-AI models (GPT-4 & Gemini). Extracts real-time data from ESPN Cricinfo/Cricbuzz, evaluates performance metrics, injury status & match suitability, then generates detailed PDF reports for strategic team selection decisions.<br><br>
 📋 Overview<br>
 This intelligent system analyzes cricket players' suitability for specific match scenarios by:
