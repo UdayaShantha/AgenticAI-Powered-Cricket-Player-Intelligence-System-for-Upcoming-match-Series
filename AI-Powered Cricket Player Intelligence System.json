@@ -1,0 +1,803 @@
+{
+  "name": "AI-Powered Cricket Player Intelligence System",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Use, consider then analyze all these data {{ $json.output }} about {{ $('Webhook').item.json.body['playerName '] }} on this players performance and cricket life details then give me fully detiled report that {{ $('Webhook').item.json.body['playerName '] }} is suitable for {{ $('Webhook').item.json.body.sericeType }} serice {{ $('Webhook').item.json.body.matchType }} match with {{ $('Webhook').item.json.body.compititor }} team in {{ $('Webhook').item.json.body.location }} with analyzing all these given data {{ $json.output }} and {{ $('Webhook').item.json.body['playerName '] }}'s any other all relevant data about performance, previous matches details about {{ $('Webhook').item.json.body['playerName '] }} with {{ $('Webhook').item.json.body.compititor }} team for {{ $('Webhook').item.json.body.matchType }} matches as {{ $('Webhook').item.json.body.sericeType }} serice in {{ $('Webhook').item.json.body.location }}. So please analyze more and more deeply then give me the best report and please ignore this type as \"Of course. As the designated deep analyzer and decision-maker, I have synthesized the provided foundational analysis, integrated crucial updated data post-2023, and conducted a granular\" AI messages in the output please and give me the the best high accurate deep analyzis reliable detailed report.",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are the reliable deep analyzer then decision maker with going through all the updated data sources in Men's Cricket domain."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -544,
+        -496
+      ],
+      "id": "777089ab-d99b-4d91-9877-6f3f0ac560a0",
+      "name": "AI Agent",
+      "retryOnFail": false,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": " /cricket-player-analysis",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2064,
+        -512
+      ],
+      "id": "84821093-f8fe-49e6-91a0-f2fec2f60369",
+      "name": "Webhook",
+      "webhookId": "5f7ee9fa-84fd-42b8-ad39-c1af8eea2eaf"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Go through with these all  {{ $json.urls }} list with their extarcted contents as {{ $json.output }} about {{ $('Webhook').item.json.body['playerName '] }} and finally give me the fully detailed description about his cricket career with best analysis for future decisions about this player {{ $('Webhook').item.json.body['playerName '] }} for upcoming cricket matches. If you can't access or go through with these all {{ $json.urls }} directly then go through with all the up to dated data scources about this player {{ $('Webhook').item.json.body['playerName '] }} then give me fully very detailed analysis about this player for getting decisions about this plyer for next up coming matches. Please give me all the details about {{ $('Webhook').item.json.body['playerName '] }}like Last matches BattingAvg, Last matches BowlingEcon, Training Attendance, Injury Status, How the injuries are happen, Training Intensity Score, Strike Rate, Feilding accuracy score, IQ Level, Number of matches already played in all ICC formats, Best beated teams, Best scores like wise all the relevant detaiuls of {{ $('Webhook').item.json.body['playerName '] }} for deep analysis please.",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are the intelligent web searching and relevant data extraction tool and also deeply data analyzing and decisions making tool forever.",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -912,
+        -576
+      ],
+      "id": "f18cad4f-102c-4561-be7a-8e2b802b5866",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1008,
+        -368
+      ],
+      "id": "c2988817-61c8-4b40-a3a5-bfb277833c6d",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "Jb1sbrQkEBHKMrai",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const urls = [];\n\nfor (const item of $input.first().json.items) {\n  for (const [key, value] of Object.entries(item)) {\n    if (key === 'link') {\n      urls.push(value);\n    }\n  }\n}\n\nreturn [{ urls }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1232,
+        -512
+      ],
+      "id": "d5de9928-70cc-4aa5-a704-996ea1f5d0a7",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/customsearch/v1?key=AIzaSyCXAFUTXDzeUNaqQMiDRzxCKSDKtalyjak&cx=d76aa91d75157483d&q={{ encodeURIComponent($('Webhook').item.json.body['playerName '] + ' international cricket stats career records injuries form ICC ODI Test T20I site:espncricinfo.com OR site:cricbuzz.com -IPL -BBL -CPL -PSL -BPL') }}&num=10&dateRestrict=y2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1440,
+        -512
+      ],
+      "id": "f18f8d88-05a1-4968-b3b6-87df523c24ee",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"playerName\": \"{{$json.body.playerName || $json.playerName}}\",\n  \"searchDate\": \"{{$now.format('yyyy-MM-dd')}}\",\n  \"analysisTimestamp\": \"{{$now.toISO()}}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1648,
+        -512
+      ],
+      "id": "c93daffb-3436-45ed-a939-04a0f3fb383e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Go through with these all  {{ $json.urls }} list with their extarcted contents as {{ $json.output }} about {{ $('Webhook').item.json.body['playerName '] }} and finally give me the fully detailed description about his cricket career with best analysis for future decisions about this player {{ $('Webhook').item.json.body['playerName '] }} for upcoming cricket matches. And also go through with all the up to dated data scources about this player {{ $('Webhook').item.json.body['playerName '] }} then give me fully very detailed analysis about this player for getting decisions about this plyer for next up coming matches. Please give me all the details about {{ $('Webhook').item.json.body['playerName '] }}like Last matches BattingAvg, Last matches BowlingEcon, Training Attendance, Injury Status, How the injuries are happen, Training Intensity Score, Strike Rate, Feilding accuracy score, IQ Level, Number of matches already played in all ICC formats, Best beated teams, Best scores like wise all the relevant detaiuls of {{ $('Webhook').item.json.body['playerName '] }} for deep analysis please. And also please consider up to date {{ $('Webhook').item.json.body['playerName '] }}'s news and updates for these all of analyzations.",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are the intelligent web searching and relevant data extraction tool and also deeply data analyzing and decisions making tool forever.",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -2176,
+        -304
+      ],
+      "id": "f0585327-3516-4606-8366-910721ad3bb8",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2240,
+        -112
+      ],
+      "id": "5a734a14-0427-4e41-b93e-2291f7a1f2d1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z3shl2jtNCXsh7zm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Go through with these in-coming results from two different AI Agents as  {{ $json.output }} and {{ $json.output }}. So combine these two outcomes then analyze those then give the fully detailed output for {{$('Webhook').item.json.body['playerName '] }}'s player details very deep analysis and if you can add more reliable data or updated newly data to this please add them all for highest deep analysis then give highly detailed analyzing fully detailed report about this player please.",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are the world's best content analyzer and all the relevant suitable data extraction model ever.",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -848,
+        96
+      ],
+      "id": "7cc0970c-e7c8-4544-9197-2cc8a8c6eeca",
+      "name": "AI Agent3"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -944,
+        256
+      ],
+      "id": "c804e99a-fdaa-4fe8-a1dd-c97b813d96b9",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z3shl2jtNCXsh7zm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-pro-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -816
+      ],
+      "id": "a8d6eb12-827f-4c45-98a2-a1a3f5bf4287",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z3shl2jtNCXsh7zm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "=You are the best web scrape model and data extarction model with given all the URLs in ever. Please do web scrape for all the URLs.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "={{ $json.urls[0] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[0] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[1] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[1] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[2] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[2] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[3] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[3] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[4] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[4] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[5] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[5] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[6] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[6] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[7] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[7] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[8] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[8] }} html content",
+              "required": true
+            },
+            {
+              "name": "={{ $json.urls[9] }}",
+              "description": "=Web Scrape all the html content and all the texts in this {{ $json.urls[9] }} html content",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -1072,
+        -1040
+      ],
+      "id": "9f249157-2f2b-4b0e-8fe3-fd767c852044",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -288
+      ],
+      "id": "b5057771-1c13-4fa4-8e05-cf64d04fa7eb",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z3shl2jtNCXsh7zm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "udayashanaka42@gmail.com",
+        "subject": "={{ $('Webhook').item.json.body['playerName '] }}'s player Analysis Report for {{ $('Webhook').item.json.body.matchType }}-{{ $('Webhook').item.json.body.sericeType }} Seriece against {{ $('Webhook').item.json.body.compititor }} in {{ $('Webhook').item.json.body.location }}",
+        "message": "Dear Head Coach,<br><br>Here you can see the attached document of the player suitability for the match series.<br><br>Thank you,<br>AI Cricket Player Intelligence Analyzer.",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=my_attachment_pdf"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1104,
+        -496
+      ],
+      "id": "a0b5d485-0dbc-4897-ac06-50507b605d1a",
+      "name": "Send a message",
+      "webhookId": "ffa93bdb-b642-4957-ac02-883232a7d097",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LJ53lZ3potl0kfQN",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "folderId": "19_AfPOZnJhnsijRyrmxzStxlNa8377PR",
+        "title": "={{ $('Webhook').item.json.body['playerName '] }}'s player Analysis Report for {{ $('Webhook').item.json.body.matchType }}-{{ $('Webhook').item.json.body.sericeType }} Seriece against {{ $('Webhook').item.json.body.compititor }} in {{ $('Webhook').item.json.body.location }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        48,
+        -496
+      ],
+      "id": "7ddb3967-02b1-4c20-ab28-85e6ddf4635d",
+      "name": "Create a document",
+      "executeOnce": true,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "TkUi50lGXUF2RtJm",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "simple": false,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('AI Agent').item.json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        464,
+        -496
+      ],
+      "id": "3a6a82f2-0af6-416e-b213-ed4d7540645c",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "TkUi50lGXUF2RtJm",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "options": {
+          "binaryPropertyName": "=my_attachment_pdf",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        784,
+        -496
+      ],
+      "id": "e039a0ae-aa7e-48f3-9e17-a161e493dcf1",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zu4CRDPJK0PBdapK",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        -352
+      ],
+      "id": "437b09d0-3d3b-4772-a3b6-6cb7cef38255",
+      "name": "Google Gemini Chat Model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z3shl2jtNCXsh7zm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -832,
+        320
+      ],
+      "id": "10a94ca8-1869-476a-bb45-8390da3798d2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Jb1sbrQkEBHKMrai",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "chatgpt-4o-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2144,
+        -32
+      ],
+      "id": "ce4515a0-cc51-4fd0-a768-d056928b3128",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "Jb1sbrQkEBHKMrai",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "chatgpt-4o-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -272
+      ],
+      "id": "311a4d38-48de-4a29-8328-110474c34ad6",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "Jb1sbrQkEBHKMrai",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "throw new Error(\"Stopping workflow intentionally\");"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        -496
+      ],
+      "id": "e46f9101-eb08-46a5-819e-b4967b40042e",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a document": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b48c5569-abca-4724-bca0-3f955107ac80",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5a858b3993acf84ee5108ce11f0f80178c1697f0432ca2858761821a806318c4"
+  },
+  "id": "e5ZFixPajdIiseJj",
+  "tags": []
+}
